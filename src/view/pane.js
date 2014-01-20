@@ -1097,6 +1097,15 @@ Candy.View.Pane = (function(self, $) {
 			var roomId = Candy.Util.jidToId(roomJid);
 			self.Chat.rooms[roomJid] = {id: roomId, usercount: 0, name: roomName, type: roomType, messageCount: 0, scrollPosition: -1};
 
+			var evtData = { jid: roomJid };
+			
+			console.log("Trigger Room");
+			
+			//we need a trigger here before roomShow
+			$(Candy).triggerHandler('candy:view.room.before-add', evtData);
+			
+			if (evtData.block) return;
+			
 			$('#chat-rooms').append(Mustache.to_html(Candy.View.Template.Room.pane, {
 				roomId: roomId,
 				roomJid: roomJid,
@@ -1895,7 +1904,7 @@ Candy.View.Pane = (function(self, $) {
 			var roomType = Candy.View.Pane.Chat.rooms[Candy.View.getCurrent().roomJid].type,
 				message = $(this).children('.field').val().substring(0, Candy.View.getOptions().crop.message.body);
 
-			var evtData = {message: message};
+			var evtData = {message: message, jid: Candy.View.getCurrent().roomJid };
 
 			/** Event: candy:view.message.before-send
 			 * Before sending a message
