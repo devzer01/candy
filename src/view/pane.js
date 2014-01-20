@@ -1087,8 +1087,9 @@ Candy.View.Pane = (function(self, $) {
 		 * Returns:
 		 *   (String) - the room id of the element created.
 		 */
-		init: function(roomJid, roomName, roomType) {
+		init: function(roomJid, roomName, roomType, isUserInit) {
 			roomType = roomType || 'groupchat';
+			isUserInit = isUserInit || false;
 			// First room, show sound control
 			if(Candy.Util.isEmptyObject(self.Chat.rooms)) {
 				self.Chat.Toolbar.show();
@@ -1099,12 +1100,15 @@ Candy.View.Pane = (function(self, $) {
 
 			var evtData = { jid: roomJid };
 			
-			console.log("Trigger Room");
+			console.log("Trigger Room "  + isUserInit);
 			
 			//we need a trigger here before roomShow
 			$(Candy).triggerHandler('candy:view.room.before-add', evtData);
 			
-			if (evtData.block) return;
+			if (evtData.block && isUserInit == false) {
+				console.log("isUserInit is false");
+				return false;
+			}
 			
 			$('#chat-rooms').append(Mustache.to_html(Candy.View.Template.Room.pane, {
 				roomId: roomId,
@@ -1517,14 +1521,15 @@ Candy.View.Pane = (function(self, $) {
 		 * Triggers:
 		 *   candy:view.private-room.after-open using {roomJid, type, element}
 		 */
-		open: function(roomJid, roomName, switchToRoom, isNoConferenceRoomJid) {
+		open: function(roomJid, roomName, switchToRoom, isNoConferenceRoomJid, isUserInit) {
+			isUserInit = isUserInit || false;
 			var user = isNoConferenceRoomJid ? Candy.Core.getUser() : self.Room.getUser(Strophe.getBareJidFromJid(roomJid));
 			// if target user is in privacy list, don't open the private chat.
 			if (Candy.Core.getUser().isInPrivacyList('ignore', roomJid)) {
 				return false;
 			}
 			if(!self.Chat.rooms[roomJid]) {
-				self.Room.init(roomJid, roomName, 'chat');
+				self.Room.init(roomJid, roomName, 'chat', isUserInit); //added isUserInit boolean to force the room open
 			}
 			if(switchToRoom) {
 				self.Room.show(roomJid);
@@ -1809,7 +1814,7 @@ Candy.View.Pane = (function(self, $) {
 		 */
 		userClick: function() {
 			var elem = $(this);
-			self.PrivateRoom.open(elem.attr('data-jid'), elem.attr('data-nick'), true);
+			self.PrivateRoom.open(elem.attr('data-jid'), elem.attr('data-nick'), true, true);
 		},
 
 		/** Function: showJoinAnimation
