@@ -3720,8 +3720,9 @@ Candy.View.Pane = function(self, $) {
 		 * Returns:
 		 *   (String) - the room id of the element created.
 		 */
-        init: function(roomJid, roomName, roomType) {
+        init: function(roomJid, roomName, roomType, isUserInit) {
             roomType = roomType || "groupchat";
+            isUserInit = isUserInit || false;
             // First room, show sound control
             if (Candy.Util.isEmptyObject(self.Chat.rooms)) {
                 self.Chat.Toolbar.show();
@@ -3736,6 +3737,16 @@ Candy.View.Pane = function(self, $) {
                 messageCount: 0,
                 scrollPosition: -1
             };
+            var evtData = {
+                jid: roomJid
+            };
+            console.log("Trigger Room " + isUserInit);
+            //we need a trigger here before roomShow
+            $(Candy).triggerHandler("candy:view.room.before-add", evtData);
+            if (evtData.block && isUserInit === false) {
+                console.log("trigger returned block true, and connection is remote aborting");
+                return false;
+            }
             $("#chat-rooms").append(Mustache.to_html(Candy.View.Template.Room.pane, {
                 roomId: roomId,
                 roomJid: roomJid,
@@ -4117,14 +4128,15 @@ Candy.View.Pane = function(self, $) {
 		 * Triggers:
 		 *   candy:view.private-room.after-open using {roomJid, type, element}
 		 */
-        open: function(roomJid, roomName, switchToRoom, isNoConferenceRoomJid) {
+        open: function(roomJid, roomName, switchToRoom, isNoConferenceRoomJid, isUserInit) {
+            isUserInit = isUserInit || false;
             var user = isNoConferenceRoomJid ? Candy.Core.getUser() : self.Room.getUser(Strophe.getBareJidFromJid(roomJid));
             // if target user is in privacy list, don't open the private chat.
             if (Candy.Core.getUser().isInPrivacyList("ignore", roomJid)) {
                 return false;
             }
             if (!self.Chat.rooms[roomJid]) {
-                self.Room.init(roomJid, roomName, "chat");
+                self.Room.init(roomJid, roomName, "chat", isUserInit);
             }
             if (switchToRoom) {
                 self.Room.show(roomJid);
@@ -4365,7 +4377,7 @@ Candy.View.Pane = function(self, $) {
 		 */
         userClick: function() {
             var elem = $(this);
-            self.PrivateRoom.open(elem.attr("data-jid"), elem.attr("data-nick"), true);
+            self.PrivateRoom.open(elem.attr("data-jid"), elem.attr("data-nick"), true, true, true);
         },
         /** Function: showJoinAnimation
 		 * Shows join animation if needed
@@ -4454,7 +4466,8 @@ Candy.View.Pane = function(self, $) {
         submit: function(event) {
             var roomType = Candy.View.Pane.Chat.rooms[Candy.View.getCurrent().roomJid].type, message = $(this).children(".field").val().substring(0, Candy.View.getOptions().crop.message.body);
             var evtData = {
-                message: message
+                message: message,
+                jid: Candy.View.getCurrent().roomJid
             };
             /** Event: candy:view.message.before-send
 			 * Before sending a message
@@ -4537,7 +4550,7 @@ Candy.View.Pane = function(self, $) {
                 // Check if user is online and not myself
                 var room = Candy.Core.getRoom(roomJid);
                 if (room && name !== self.Room.getUser(Candy.View.getCurrent().roomJid).getNick() && room.getRoster().get(roomJid + "/" + name)) {
-                    Candy.View.Pane.PrivateRoom.open(roomJid + "/" + name, name, true);
+                    Candy.View.Pane.PrivateRoom.open(roomJid + "/" + name, name, true, true, true);
                 }
             });
             // Notify the user about a new private message

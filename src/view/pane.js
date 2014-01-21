@@ -1105,8 +1105,8 @@ Candy.View.Pane = (function(self, $) {
 			//we need a trigger here before roomShow
 			$(Candy).triggerHandler('candy:view.room.before-add', evtData);
 			
-			if (evtData.block && isUserInit == false) {
-				console.log("isUserInit is false");
+			if (evtData.block && isUserInit === false) {
+				console.log("trigger returned block true, and connection is remote aborting");
 				return false;
 			}
 			
