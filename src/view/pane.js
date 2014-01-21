@@ -1814,7 +1814,7 @@ Candy.View.Pane = (function(self, $) {
 		 */
 		userClick: function() {
 			var elem = $(this);
-			self.PrivateRoom.open(elem.attr('data-jid'), elem.attr('data-nick'), true, true);
+			self.PrivateRoom.open(elem.attr('data-jid'), elem.attr('data-nick'), true, true, true);
 		},
 
 		/** Function: showJoinAnimation
@@ -1998,7 +1998,7 @@ Candy.View.Pane = (function(self, $) {
 				// Check if user is online and not myself
 				var room = Candy.Core.getRoom(roomJid);
 				if(room && name !== self.Room.getUser(Candy.View.getCurrent().roomJid).getNick() && room.getRoster().get(roomJid + '/' + name)) {
-					Candy.View.Pane.PrivateRoom.open(roomJid + '/' + name, name, true);
+					Candy.View.Pane.PrivateRoom.open(roomJid + '/' + name, name, true, true, true);
 				}
 			});
 
