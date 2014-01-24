@@ -1105,7 +1105,6 @@ Candy.View.Pane = (function(self, $) {
 			$(Candy).triggerHandler('candy:view.room.before-add', evtData);
 			
 			if (evtData.block && isUserInit == false) {
-				//console.log("isUserInit is false");
 				return false;
 			}
 			

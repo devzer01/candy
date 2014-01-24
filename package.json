@@ -4,7 +4,6 @@
   "description": "Multi-user XMPP web client",
   "main": "candy.min.js",
   "directories": {
-    "doc": "docs",
     "example": "example"
   },
   "scripts": {
@@ -23,17 +22,10 @@
     "chat"
   ],
   "contributors": [
-    {
-      "name": "Michael Weibel",
-      "email": "michael.weibel@gmail.com"
-    },
-    {
-      "name": "Patrick Stadler",
-      "email": "patrick.stadler@gmail.com",
-      "url": "http://pstadler.sh"
-    }
+    "Michael Weibel <michael.weibel@gmail.com>",
+    "Patrick Stadler <patrick.stadler@gmail.com> (http://pstadler.sh)"
   ],
-  "license": "MIT",
+  "license": "BSD",
   "bugs": {
     "url": "https://github.com/candy-chat/candy/issues"
   },
@@ -49,5 +41,8 @@
     "grunt-contrib-clean": "~0.5.0",
     "grunt-mkdir": "~0.1.1",
     "grunt-notify": "~0.2.17"
-  }
+  },
+  "gitHead": "aa7a5ee18c92b164601c22a44a1e2006906927b4",
+  "readmeFilename": "README.md",
+  "author": ""
 }
