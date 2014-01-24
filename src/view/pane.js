@@ -1528,7 +1528,8 @@ Candy.View.Pane = (function(self, $) {
 				return false;
 			}
 			if(!self.Chat.rooms[roomJid]) {
-				self.Room.init(roomJid, roomName, 'chat', isUserInit); //added isUserInit boolean to force the room open
+				var retval = self.Room.init(roomJid, roomName, 'chat', isUserInit); //added isUserInit boolean to force the room open
+				if (retval === false) return;
 			}
 			if(switchToRoom) {
 				self.Room.show(roomJid);
